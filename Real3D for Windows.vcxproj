@@ -145,9 +145,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\gmath.h" />
+    <ClInclude Include="include\real3d\block.h" />
     <ClInclude Include="include\real3d\player.h" />
     <ClInclude Include="include\real3d\timer.h" />
     <ClInclude Include="include\real3d\aabb.h" />
+    <ClInclude Include="include\real3d\world.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

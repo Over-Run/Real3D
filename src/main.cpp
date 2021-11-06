@@ -3,6 +3,10 @@
 #include <fstream>
 #include <sstream>
 
+#include "real3d/player.h"
+#include "real3d/timer.h"
+#include "real3d/block.h"
+
 #define GLFW_INCLUDE_NONE
 #include "GLFW/glfw3.h"
 #define GLAD_GL_IMPLEMENTATION
@@ -10,9 +14,6 @@
 #include <gl/GLU.h>
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb/stb_image.h"
-
-#include "real3d/player.h"
-#include "real3d/timer.h"
 
 #define ERROR_EXIT(msg) \
 const char* desc; \
@@ -32,6 +33,7 @@ using std::stringstream;
 using std::string;
 using Real3D::Timer;
 using Real3D::Player;
+using Real3D::Blocks;
 
 GLFWwindow* window;
 Timer* timer;
@@ -121,6 +123,7 @@ int WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     glClearColor(0.4f, 0.6f, 0.9f, 1.0f);
     glEnable(GL_TEXTURE_2D);
     glEnable(GL_DEPTH_TEST);
+    glEnable(GL_CULL_FACE);
     resize(WIDTH, HEIGHT);
 
     glGenTextures(1, &blockAtlas);
@@ -131,6 +134,8 @@ int WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     stbi_uc* pixels = stbi_load("res/block-atlas.png", &w, &h, &c, STBI_rgb_alpha);
     gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGBA, w, h, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
     stbi_image_free(pixels);
+
+    Blocks::init();
 
     player = new Player();
 
@@ -159,40 +164,8 @@ int WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         glColor3d(1, 1, 1);
 
         glBegin(GL_QUADS);
-        auto u0 = 0.0;
-        auto u1 = 16.0 / 256;
-        auto v0 = 0.0;
-        auto v1 = 16.0 / 256;
-        // North
-        glTexCoord2d(u0, v0); glVertex3d(1, 0, 0);
-        glTexCoord2d(u1, v0); glVertex3d(0, 0, 0);
-        glTexCoord2d(u1, v1); glVertex3d(0, 1, 0);
-        glTexCoord2d(u0, v1); glVertex3d(1, 1, 0);
-        // South
-        glTexCoord2d(u0, v0); glVertex3d(0, 0, 1);
-        glTexCoord2d(u1, v0); glVertex3d(1, 0, 1);
-        glTexCoord2d(u1, v1); glVertex3d(1, 1, 1);
-        glTexCoord2d(u0, v1); glVertex3d(0, 1, 1);
-        // West
-        glTexCoord2d(u0, v0); glVertex3d(0, 0, 0);
-        glTexCoord2d(u1, v0); glVertex3d(0, 0, 1);
-        glTexCoord2d(u1, v1); glVertex3d(0, 1, 1);
-        glTexCoord2d(u0, v1); glVertex3d(0, 1, 0);
-        // East
-        glTexCoord2d(u0, v0); glVertex3d(1, 0, 1);
-        glTexCoord2d(u1, v0); glVertex3d(1, 0, 0);
-        glTexCoord2d(u1, v1); glVertex3d(1, 1, 0);
-        glTexCoord2d(u0, v1); glVertex3d(1, 1, 1);
-        // Up
-        glTexCoord2d(u0, v0); glVertex3d(0, 1, 1);
-        glTexCoord2d(u1, v0); glVertex3d(1, 1, 1);
-        glTexCoord2d(u1, v1); glVertex3d(1, 1, 0);
-        glTexCoord2d(u0, v1); glVertex3d(0, 1, 0);
-        // Down
-        glTexCoord2d(u0, v0); glVertex3d(0, 0, 0);
-        glTexCoord2d(u1, v0); glVertex3d(1, 0, 0);
-        glTexCoord2d(u1, v1); glVertex3d(1, 0, 1);
-        glTexCoord2d(u0, v1); glVertex3d(0, 0, 1);
+        Blocks::GRASS_BLOCK->render(0, 1, 0);
+        Blocks::STONE->render(0, 0, 0);
         glEnd();
 
         glBindTexture(GL_TEXTURE_2D, 0);

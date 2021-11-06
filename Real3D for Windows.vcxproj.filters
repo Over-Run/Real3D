@@ -38,5 +38,11 @@
     <ClInclude Include="include\real3d\aabb.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\real3d\block.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\real3d\world.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
