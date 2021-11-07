@@ -58,20 +58,20 @@ AABB AABB::grow(double xa, double ya, double za) {
     double _z1 = z1 + za;
     return AABB(_x0, _y0, _z0, _x1, _y1, _z1);
 }
-double AABB::clipXCollide(AABB c, double xa) {
-    if (c.y1 <= y0 || c.y0 >= y1 || c.z1 <= z0 || c.z0 >= z1) {
+double AABB::clipXCollide(AABB* c, double xa) {
+    if (c->y1 <= y0 || c->y0 >= y1 || c->z1 <= z0 || c->z0 >= z1) {
         return xa;
     }
     double max;
-    if (xa > 0.0 && c.x1 <= x0) {
-        max = x0 - c.x1 - epsilon;
+    if (xa > 0.0 && c->x1 <= x0) {
+        max = x0 - c->x1 - epsilon;
         if (max < xa) {
             xa = max;
         }
     }
 
-    if (xa < 0.0 && c.x0 >= x1) {
-        max = x1 - c.x0 + epsilon;
+    if (xa < 0.0 && c->x0 >= x1) {
+        max = x1 - c->x0 + epsilon;
         if (max > xa) {
             xa = max;
         }
@@ -79,20 +79,20 @@ double AABB::clipXCollide(AABB c, double xa) {
 
     return xa;
 }
-double AABB::clipYCollide(AABB c, double ya) {
-    if (c.x1 <= x0 || c.x0 >= x1 || c.z1 <= z0 || c.z0 >= z1) {
+double AABB::clipYCollide(AABB* c, double ya) {
+    if (c->x1 <= x0 || c->x0 >= x1 || c->z1 <= z0 || c->z0 >= z1) {
         return ya;
     }
     double max;
-    if (ya > 0.0 && c.y1 <= y0) {
-        max = y0 - c.y1 - epsilon;
+    if (ya > 0.0 && c->y1 <= y0) {
+        max = y0 - c->y1 - epsilon;
         if (max < ya) {
             ya = max;
         }
     }
 
-    if (ya < 0.0 && c.y0 >= y1) {
-        max = y1 - c.y0 + epsilon;
+    if (ya < 0.0 && c->y0 >= y1) {
+        max = y1 - c->y0 + epsilon;
         if (max > ya) {
             ya = max;
         }
@@ -100,20 +100,20 @@ double AABB::clipYCollide(AABB c, double ya) {
 
     return ya;
 }
-double AABB::clipZCollide(AABB c, double za) {
-    if (c.x1 <= x0 || c.x0 >= x1 || c.y1 <= y0 || c.y0 >= y1) {
+double AABB::clipZCollide(AABB* c, double za) {
+    if (c->x1 <= x0 || c->x0 >= x1 || c->y1 <= y0 || c->y0 >= y1) {
         return za;
     }
     double max;
-    if (za > 0.0 && c.z1 <= z0) {
-        max = z0 - c.z1 - epsilon;
+    if (za > 0.0 && c->z1 <= z0) {
+        max = z0 - c->z1 - epsilon;
         if (max < za) {
             za = max;
         }
     }
 
-    if (za < 0.0 && c.z0 >= z1) {
-        max = z1 - c.z0 + epsilon;
+    if (za < 0.0 && c->z0 >= z1) {
+        max = z1 - c->z0 + epsilon;
         if (max > za) {
             za = max;
         }
@@ -121,10 +121,10 @@ double AABB::clipZCollide(AABB c, double za) {
 
     return za;
 }
-bool AABB::intersects(AABB c) {
-    return !(c.x1 <= x0 || c.x0 >= x1
-        || c.y1 <= y0 || c.y0 >= y1
-        || c.z1 <= z0 || c.z0 >= z1);
+bool AABB::intersects(AABB* c) {
+    return !(c->x1 <= x0 || c->x0 >= x1
+        || c->y1 <= y0 || c->y0 >= y1
+        || c->z1 <= z0 || c->z0 >= z1);
 }
 void AABB::move(double xa, double ya, double za) {
     x0 += xa;

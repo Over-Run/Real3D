@@ -18,6 +18,8 @@ namespace Real3D {
         bool flying = false;
         double lastSpace = 0;
         AABB* bb = nullptr;
+        // Note: We'll change it to Item*[2]
+        Block* handItems;
 
         Player(World*);
 

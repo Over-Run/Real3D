@@ -21,10 +21,10 @@ namespace Real3D {
             double _z1);
         AABB expand(double xa,  double ya, double za);
         AABB grow(double xa, double ya, double za);
-        double clipXCollide(AABB c, double xa);
-        double clipYCollide(AABB c, double ya);
-        double clipZCollide(AABB c, double za);
-        bool intersects(AABB c);
+        double clipXCollide(AABB* c, double xa);
+        double clipYCollide(AABB* c, double ya);
+        double clipZCollide(AABB* c, double za);
+        bool intersects(AABB* c);
         void move(double xa, double ya, double za);
     };
 }

@@ -14,7 +14,9 @@ namespace Real3D {
         int textureBottom;
         Block(int _id);
 
+        virtual AABB* getOutline();
         virtual AABB* getCollision();
+        virtual void pickFace(int x, int y, int z, Direction dir);
         virtual void renderFace(int x, int y, int z, Direction dir);
         virtual void render(World* world, int x, int y, int z);
     };
@@ -23,7 +25,9 @@ namespace Real3D {
     public:
         AirBlock(int _id);
 
+        AABB* getOutline() override;
         AABB* getCollision() override;
+        void pickFace(int x, int y, int z, Direction dir) override;
         void renderFace(int, int, int, Direction) override;
         void render(World*, int, int, int) override;
     };

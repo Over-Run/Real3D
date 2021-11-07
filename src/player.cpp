@@ -80,14 +80,14 @@ void Player::tick() {
         yd -= 0.08;
     move(xd, yd, zd);
     xd *= 0.91;
-    if (flying)
-        yd = 0;
-    else
-        yd *= 0.98;
+    yd *= 0.98;
     zd *= 0.91;
     if (onGround || flying) {
         xd *= 0.7;
         zd *= 0.7;
+    }
+    if (flying) {
+        yd *= 0.5;
     }
 }
 void Player::move(double xa, double ya, double za) {
@@ -96,17 +96,20 @@ void Player::move(double xa, double ya, double za) {
     double zaOrg = za;
     vector<AABB*> cubes = world->getCubes(bb->expand(xa, ya, za));
     for (AABB* aabb : cubes) {
-        ya = aabb->clipYCollide(*bb, ya);
+        ya = aabb->clipYCollide(bb, ya);
     }
     bb->move(0.0, ya, 0.0);
     for (AABB* aabb : cubes) {
-        xa = aabb->clipXCollide(*bb, xa);
+        xa = aabb->clipXCollide(bb, xa);
     }
     bb->move(xa, 0.0, 0.0);
     for (AABB* aabb : cubes) {
-        za = aabb->clipZCollide(*bb, za);
+        za = aabb->clipZCollide(bb, za);
     }
     bb->move(0.0, 0.0, za);
+    for (auto& b : cubes) {
+        delete b;
+    }
     onGround = yaOrg != ya && yaOrg < 0.0;
     if (onGround
         && glfwGetKey(

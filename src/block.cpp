@@ -13,8 +13,58 @@ Block::Block(int _id) :
     textureTop(_id),
     textureSide(_id),
     textureBottom(_id) {}
+AABB* Block::getOutline() {
+    return AABB::FULL_CUBE;
+}
 AABB* Block::getCollision() {
     return AABB::FULL_CUBE;
+}
+void Block::pickFace(int x, int y, int z, Direction dir) {
+    auto x0 = x;
+    auto x1 = 1 + x;
+    auto y0 = y;
+    auto y1 = 1 + y;
+    auto z0 = z;
+    auto z1 = 1 + z;
+    switch (dir) {
+    case Direction::NORTH:
+        glVertex3d(x1, y0, z0);
+        glVertex3d(x0, y0, z0);
+        glVertex3d(x0, y1, z0);
+        glVertex3d(x1, y1, z0);
+        break;
+    case Direction::SOUTH:
+        glVertex3d(x0, y0, z1);
+        glVertex3d(x1, y0, z1);
+        glVertex3d(x1, y1, z1);
+        glVertex3d(x0, y1, z1);
+        break;
+    case Direction::WEST:
+        glVertex3d(x0, y0, z0);
+        glVertex3d(x0, y0, z1);
+        glVertex3d(x0, y1, z1);
+        glVertex3d(x0, y1, z0);
+        break;
+    case Direction::EAST:
+        glVertex3d(x1, y0, z1);
+        glVertex3d(x1, y0, z0);
+        glVertex3d(x1, y1, z0);
+        glVertex3d(x1, y1, z1);
+        break;
+    case Direction::UP: {
+        glVertex3d(x0, y1, z1);
+        glVertex3d(x1, y1, z1);
+        glVertex3d(x1, y1, z0);
+        glVertex3d(x0, y1, z0);
+        break;
+    }
+    case Direction::DOWN:
+        glVertex3d(x0, y0, z0);
+        glVertex3d(x1, y0, z0);
+        glVertex3d(x1, y0, z1);
+        glVertex3d(x0, y0, z1);
+        break;
+    }
 }
 void Block::renderFace(int x, int y, int z, Direction dir) {
     auto su0 = (textureSide % 16) * 16.0 / 256.0;
@@ -27,7 +77,6 @@ void Block::renderFace(int x, int y, int z, Direction dir) {
     auto y1 = 1 + y;
     auto z0 = z;
     auto z1 = 1 + z;
-    glColor3d(1, 1, 1);
     switch (dir) {
     case Direction::NORTH:
         glTexCoord2d(su0, sv1); glVertex3d(x1, y0, z0);
@@ -77,6 +126,7 @@ void Block::renderFace(int x, int y, int z, Direction dir) {
     }
 }
 void Block::render(World* world, int x, int y, int z) {
+    glColor3d(1, 1, 1);
     if (world->getBlock(x, y, z - 1) == Blocks::AIR) {
         renderFace(x, y, z, Direction::NORTH);
     }
@@ -98,9 +148,13 @@ void Block::render(World* world, int x, int y, int z) {
 }
 
 AirBlock::AirBlock(int _id) : Block(_id) {}
+AABB* AirBlock::getOutline() {
+    return nullptr;
+}
 AABB* AirBlock::getCollision() {
     return nullptr;
 }
+void AirBlock::pickFace(int, int, int, Direction) {}
 void AirBlock::renderFace(int, int, int, Direction) {}
 void AirBlock::render(World*, int, int, int) {}
 
