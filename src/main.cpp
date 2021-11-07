@@ -4,8 +4,8 @@
 #include <sstream>
 
 #include "real3d/player.h"
+#include "real3d/world.h"
 #include "real3d/timer.h"
-#include "real3d/block.h"
 
 #define GLFW_INCLUDE_NONE
 #include "GLFW/glfw3.h"
@@ -34,15 +34,17 @@ using std::string;
 using Real3D::Timer;
 using Real3D::Player;
 using Real3D::Blocks;
+using Real3D::World;
 
 GLFWwindow* window;
 Timer* timer;
 Player* player;
+World* world;
 
 GLuint blockAtlas;
 
 double lastX, lastY;
-boolean grabbing;
+bool grabbing;
 
 void errorCb(int code, const char* desc) {
     cout << "Error " << code << ": " << desc << endl;
@@ -58,6 +60,14 @@ void keyCb(GLFWwindow*, int key, int scancode, int action, int mods) {
             glfwSetInputMode(window,
                 GLFW_CURSOR,
                 grabbing ? GLFW_CURSOR_DISABLED : GLFW_CURSOR_NORMAL);
+        }
+    }
+    else if (action == GLFW_PRESS) {
+        if (key == GLFW_KEY_SPACE) {
+            if (timer->lastTime - player->lastSpace <= 0.5 * NS_PER_SECOND) {
+                player->flying = !player->flying;
+            }
+            player->lastSpace = timer->lastTime;
         }
     }
 }
@@ -137,7 +147,8 @@ int WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
     Blocks::init();
 
-    player = new Player();
+    world = new World();
+    player = new Player(world);
 
     timer = new Timer(20.0);
     timer->advanceTime();
@@ -146,6 +157,7 @@ int WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
     double lastTime = glfwGetTime() * 1000;
     int frames = 0;
+    player->lastSpace = timer->passedTime;
     while (!glfwWindowShouldClose(window)) {
         timer->advanceTime();
         for (int i = 0; i < timer->ticks; ++i) {
@@ -157,18 +169,10 @@ int WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         glRotated(player->xRot, -1, 0, 0);
         glRotated(player->yRot, 0, 1, 0);
         double x = player->prevX + (player->x - player->prevX) * timer->delta;
-        double y = player->prevY + (player->y - player->prevY) * timer->delta;
+        double y = (player->prevY + (player->y - player->prevY) * timer->delta) + player->heightOffset;
         double z = player->prevZ + (player->z - player->prevZ) * timer->delta;
         glTranslated(-x, -y, -z);
-        glBindTexture(GL_TEXTURE_2D, blockAtlas);
-        glColor3d(1, 1, 1);
-
-        glBegin(GL_QUADS);
-        Blocks::GRASS_BLOCK->render(0, 1, 0);
-        Blocks::STONE->render(0, 0, 0);
-        glEnd();
-
-        glBindTexture(GL_TEXTURE_2D, 0);
+        world->render(blockAtlas);
         glPopMatrix();
         glfwSwapBuffers(window);
         glfwPollEvents();

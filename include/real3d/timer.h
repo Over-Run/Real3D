@@ -7,10 +7,9 @@ constexpr auto MAX_TICKS_PER_UPDATE = 100;
 
 namespace Real3D {
     class Timer {
-    private:
+    public:
         const double tps;
         double lastTime;
-    public:
         int ticks = 0;
         double delta = 0;
         double fps = 0;

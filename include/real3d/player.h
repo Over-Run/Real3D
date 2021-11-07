@@ -2,8 +2,11 @@
 #include "real3d/aabb.h"
 
 namespace Real3D {
+    class World;
+
     class Player {
     public:
+        World* world;
         double prevX = 0, prevY = 0, prevZ = 0;
         double x = 0, y = 0, z = 0;
         double xd = 0, yd = 0, zd = 0;
@@ -12,10 +15,15 @@ namespace Real3D {
         double bbWidth = 0.6;
         double bbHeight = 1.8;
         double heightOffset = 1.62;
-        AABB* bb;
+        bool flying = false;
+        double lastSpace = 0;
+        AABB* bb = nullptr;
 
-        Player();
+        Player(World*);
 
+        void resetPos();
+        void setSize(double w, double h);
+        void setPos(double x, double y, double z);
         void tick();
         void move(double xa, double ya, double za);
         void moveRelative(double x, double y, double z);

@@ -139,6 +139,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\aabb.cpp" />
+    <ClCompile Include="src\block.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\player.cpp" />
     <ClCompile Include="src\timer.cpp" />
@@ -146,6 +148,7 @@
   <ItemGroup>
     <ClInclude Include="include\gmath.h" />
     <ClInclude Include="include\real3d\block.h" />
+    <ClInclude Include="include\real3d\enums.h" />
     <ClInclude Include="include\real3d\player.h" />
     <ClInclude Include="include\real3d\timer.h" />
     <ClInclude Include="include\real3d\aabb.h" />
