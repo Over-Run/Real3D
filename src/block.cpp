@@ -13,6 +13,12 @@ Block::Block(int _id) :
     textureTop(_id),
     textureSide(_id),
     textureBottom(_id) {}
+bool Block::isSolid() {
+    return true;
+}
+bool Block::isOpacity() {
+    return true;
+}
 AABB* Block::getOutline() {
     return AABB::FULL_CUBE;
 }
@@ -148,6 +154,12 @@ void Block::render(World* world, int x, int y, int z) {
 }
 
 AirBlock::AirBlock(int _id) : Block(_id) {}
+bool AirBlock::isSolid() {
+    return false;
+}
+bool AirBlock::isOpacity() {
+    return false;
+}
 AABB* AirBlock::getOutline() {
     return nullptr;
 }

@@ -74,7 +74,7 @@ void keyCb(GLFWwindow*, int key, int scancode, int action, int mods) {
     }
     else if (action == GLFW_PRESS) {
         if (key == GLFW_KEY_SPACE) {
-            if (timer->lastTime - player->lastSpace <= 0.5 * NS_PER_SECOND) {
+            if (timer->lastTime - player->lastSpace <= 0.4 * NS_PER_SECOND) {
                 player->flying = !player->flying;
             }
             player->lastSpace = timer->lastTime;
