@@ -141,14 +141,17 @@
   <ItemGroup>
     <ClCompile Include="src\aabb.cpp" />
     <ClCompile Include="src\block.cpp" />
+    <ClCompile Include="src\chunk.cpp" />
     <ClCompile Include="src\frustum.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\player.cpp" />
     <ClCompile Include="src\timer.cpp" />
+    <ClCompile Include="src\world_renderer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\gmath.h" />
     <ClInclude Include="include\real3d\block.h" />
+    <ClInclude Include="include\real3d\chunk.h" />
     <ClInclude Include="include\real3d\enums.h" />
     <ClInclude Include="include\real3d\frustum.h" />
     <ClInclude Include="include\real3d\hit.h" />
@@ -156,6 +159,7 @@
     <ClInclude Include="include\real3d\timer.h" />
     <ClInclude Include="include\real3d\aabb.h" />
     <ClInclude Include="include\real3d\world.h" />
+    <ClInclude Include="include\real3d\world_renderer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -1,5 +1,5 @@
 #pragma once
-#include "real3d/aabb.h"
+#include "aabb.h"
 
 namespace Real3D {
     class World;
