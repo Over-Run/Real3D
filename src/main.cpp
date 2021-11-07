@@ -38,6 +38,7 @@ using Real3D::Blocks;
 using Real3D::World;
 using Real3D::Frustum;
 using Real3D::HitResult;
+using Real3D::Direction;
 
 GLFWwindow* window;
 Timer* timer;
@@ -78,6 +79,16 @@ void keyCb(GLFWwindow*, int key, int scancode, int action, int mods) {
             }
             player->lastSpace = timer->lastTime;
         }
+
+        if (key == GLFW_KEY_1) {
+            player->handItems = Blocks::AIR;
+        }
+        if (key == GLFW_KEY_2) {
+            player->handItems = Blocks::GRASS_BLOCK;
+        }
+        if (key == GLFW_KEY_3) {
+            player->handItems = Blocks::STONE;
+        }
     }
 }
 void cursorPosCb(GLFWwindow*, double xpos, double ypos) {
@@ -95,9 +106,37 @@ void cursorPosCb(GLFWwindow*, double xpos, double ypos) {
 }
 void mouseButtonCb(GLFWwindow*, int button, int action, int mods) {
     if (action == GLFW_PRESS) {
-        if (button == GLFW_MOUSE_BUTTON_LEFT) {
-            if (hitResult != nullptr) {
+        if (hitResult != nullptr) {
+            if (button == GLFW_MOUSE_BUTTON_LEFT) {
                 world->setBlock(hitResult->x, hitResult->y, hitResult->z, Blocks::AIR);
+
+            }
+            if (button == GLFW_MOUSE_BUTTON_RIGHT
+                && player->handItems != Blocks::AIR) {
+                int x = hitResult->x,
+                    y = hitResult->y,
+                    z = hitResult->z;
+                switch (hitResult->face) {
+                case Direction::NORTH:
+                    --z;
+                    break;
+                case Direction::SOUTH:
+                    ++z;
+                    break;
+                case Direction::WEST:
+                    --x;
+                    break;
+                case Direction::EAST:
+                    ++x;
+                    break;
+                case Direction::UP:
+                    ++y;
+                    break;
+                case Direction::DOWN:
+                    --y;
+                    break;
+                }
+                world->setBlock(x, y, z, player->handItems);
             }
         }
     }
@@ -181,6 +220,22 @@ void drawGui() {
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     glTranslated(0.0, 0.0, -200.0);
+
+    glPushMatrix();
+    glTranslated(screenWidth - 16, 16.0, 0.0);
+    glScaled(16.0, 16.0, 16.0);
+    glRotated(30.0, 1.0, 0.0, 0.0);
+    glRotated(45.0, 0.0, 1.0, 0.0);
+    glTranslated(-1.5, 0.5, -0.5);
+    glScaled(-1.0, -1.0, 1.0);
+    glBindTexture(GL_TEXTURE_2D, blockAtlas);
+    glEnable(GL_TEXTURE_2D);
+    glBegin(GL_QUADS);
+    player->handItems->render(world, -2, 0, 0);
+    glEnd();
+    glDisable(GL_TEXTURE_2D);
+    glPopMatrix();
+
     double wc = screenWidth / 2.0;
     double hc = screenHeight / 2.0;
     glTranslated(wc, hc, 0);
@@ -188,6 +243,7 @@ void drawGui() {
     glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_ONE_MINUS_SRC_ALPHA);
     glCallList(crossing);
     glDisable(GL_BLEND);
+
 }
 
 void render(double delta) {

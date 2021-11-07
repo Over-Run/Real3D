@@ -3,6 +3,7 @@
 
 namespace Real3D {
     class World;
+    class Block;
 
     class Player {
     public:
@@ -18,7 +19,7 @@ namespace Real3D {
         bool flying = false;
         double lastSpace = 0;
         AABB* bb = nullptr;
-        // Note: We'll change it to Item*[2]
+        // Todo: We'll change it to Item*[2]
         Block* handItems;
 
         Player(World*);

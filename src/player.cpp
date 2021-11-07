@@ -8,7 +8,8 @@ using std::vector;
 using Real3D::Player;
 
 Player::Player(World* _world) :
-    world(_world) {
+    world(_world),
+    handItems(Blocks::GRASS_BLOCK) {
     resetPos();
 }
 void Player::resetPos() {
