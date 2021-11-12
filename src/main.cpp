@@ -3,10 +3,10 @@
 #include <fstream>
 #include <sstream>
 
-#include "real3d/player.h"
 #include "real3d/world.h"
 #include "real3d/timer.h"
 #include "real3d/hit.h"
+#include "real3d/world_renderer.h"
 
 #define GLFW_INCLUDE_NONE
 #include "GLFW/glfw3.h"
@@ -36,6 +36,7 @@ using Real3D::Timer;
 using Real3D::Player;
 using Real3D::Blocks;
 using Real3D::World;
+using Real3D::WorldRenderer;
 using Real3D::Frustum;
 using Real3D::HitResult;
 using Real3D::Direction;
@@ -44,6 +45,7 @@ GLFWwindow* window;
 Timer* timer;
 Player* player;
 World* world;
+WorldRenderer* worldRenderer;
 HitResult* hitResult;
 
 GLuint blockAtlas;
@@ -174,7 +176,7 @@ void pick() {
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     moveCameraToPlayer(timer->delta);
-    world->pick(player, Frustum::getFrustum());
+    worldRenderer->pick(player, Frustum::getFrustum());
     GLint hits = glRenderMode(GL_RENDER);
     long closest = 0L;
     int names[10];
@@ -260,27 +262,12 @@ void render(double delta) {
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     moveCameraToPlayer(delta);
-    world->render(blockAtlas);
+    worldRenderer->render(blockAtlas);
 
     glDisable(GL_TEXTURE_2D);
 
     if (hitResult != nullptr) {
-        auto x0 = 0;
-        auto x1 = 1 + 0;
-        auto y0 = 4;
-        auto y1 = 1 + 4;
-        auto z0 = 0;
-        auto z1 = 1 + 0;
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-        glColor4d(1.0, 1.0, 1.0, (sin(glfwGetTime() * 10.0) * 0.2 + 0.4) * 0.5);
-        glBegin(GL_QUADS);
-        Blocks::STONE->pickFace(hitResult->x,
-            hitResult->y,
-            hitResult->z,
-            hitResult->face);
-        glEnd();
-        glDisable(GL_BLEND);
+        worldRenderer->renderHit(hitResult);
     }
 
     drawGui();
@@ -339,6 +326,7 @@ int WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     Blocks::init();
 
     world = new World();
+    worldRenderer = new WorldRenderer(world);
     player = new Player(world);
 
     timer = new Timer(20.0);

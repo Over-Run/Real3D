@@ -30,7 +30,13 @@
     <ClCompile Include="src\aabb.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\chunk.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="src\frustum.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\world_renderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -56,11 +62,22 @@
     <ClInclude Include="include\real3d\enums.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\real3d\frustum.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\real3d\hit.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\real3d\chunk.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\real3d\world_renderer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\real3d\frustum.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\block-atlas.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>
