@@ -1,4 +1,5 @@
 #pragma once
+#include <cstdint>
 
 constexpr auto NS_PER_SECOND = 1000000000LL;
 constexpr auto MAX_NS_PER_UPDATE = 1000000000LL;

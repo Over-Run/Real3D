@@ -5,25 +5,22 @@
 #include "player.h"
 
 namespace Real3D {
-    class WorldListener;
-
     class World {
     public:
-        static constexpr int width = 256;
-        static constexpr int height = 64;
-        static constexpr int depth = 256;
+        static constexpr int width = 16;
+        static constexpr int height = 16;
+        static constexpr int depth = 16;
         Block* blocks[width * height * depth];
-        std::vector<WorldListener*> listeners;
 
         World() {
             for (int x = 0; x < width; ++x) {
                 for (int y = 0; y < height; ++y) {
                     for (int z = 0; z < depth; ++z) {
                         Block* b = Blocks::AIR;
-                        if (y < 6) {
+                        if (y < 4) {
                             b = Blocks::STONE;
                         }
-                        else if (y == 6) {
+                        else if (y == 4) {
                             b = Blocks::GRASS_BLOCK;
                         }
                         setBlock(x, y, z, b);
@@ -32,8 +29,75 @@ namespace Real3D {
             }
         }
 
-        void addListener(WorldListener* listener) {
-            listeners.push_back(listener);
+        void pick(Player* player, Frustum& frustum) {
+            double r = 5;
+            AABB box = player->bb->grow(r, r, r);
+            int x0 = (int)box.x0;
+            int x1 = (int)(box.x1 + 1.0);
+            int y0 = (int)box.y0;
+            int y1 = (int)(box.y1 + 1.0);
+            int z0 = (int)box.z0;
+            int z1 = (int)(box.z1 + 1.0);
+            glInitNames();
+            glPushName(0);
+            glPushName(0);
+
+            for (int x = x0; x < x1; ++x) {
+                glLoadName(x);
+                glPushName(0);
+
+                for (int y = y0; y < y1; ++y) {
+                    glLoadName(y);
+                    glPushName(0);
+
+                    for (int z = z0; z < z1; ++z) {
+                        Block* block = getBlock(x, y, z);
+                        auto box = block->getOutline();
+                        if (box != nullptr) {
+                            auto cpy = new AABB(*box);
+                            cpy->move(x, y, z);
+                            if (frustum.isVisible(cpy)) {
+                                glLoadName(z);
+                                glPushName(0);
+
+                                for (int i = 0; i < 6; ++i) {
+                                    glLoadName(i);
+                                    glBegin(GL_QUADS);
+                                    block->pickFace(x, y, z, convertFaceToDir(i));
+                                    glEnd();
+                                }
+
+                                glPopName();
+                            }
+                            delete cpy;
+                        }
+                    }
+
+                    glPopName();
+                }
+
+                glPopName();
+            }
+
+            glPopName();
+            glPopName();
+        }
+
+        void render(GLuint blockAtlas) {
+            glEnable(GL_TEXTURE_2D);
+            glBindTexture(GL_TEXTURE_2D, blockAtlas);
+
+            glBegin(GL_QUADS);
+            for (int x = 0; x < width; ++x) {
+                for (int y = 0; y < height; ++y) {
+                    for (int z = 0; z < depth; ++z) {
+                        getBlock(x, y, z)->render(this, x, y, z);
+                    }
+                }
+            }
+            glEnd();
+
+            glDisable(GL_TEXTURE_2D);
         }
 
         std::vector<AABB*> getCubes(AABB aabb) {
