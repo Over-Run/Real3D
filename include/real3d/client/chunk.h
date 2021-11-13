@@ -21,7 +21,7 @@ namespace Real3D {
         double dirtiedTime;
     private:
         bool dirty;
-        int list;
+        int lists;
     public:
         Chunk(World* _world,
             int _x0,
@@ -31,8 +31,9 @@ namespace Real3D {
             int _y1,
             int _z1);
         ~Chunk();
+        void rebuild(int layer);
         void rebuild();
-        void render();
+        void render(int layer);
         void markDirty();
         bool isDirty();
         double distanceToSqr(Player* player);

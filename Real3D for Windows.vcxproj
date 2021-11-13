@@ -148,6 +148,7 @@
     <ClCompile Include="src\player.cpp" />
     <ClCompile Include="src\tesselator.cpp" />
     <ClCompile Include="src\timer.cpp" />
+    <ClCompile Include="src\world.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\gmath.h" />

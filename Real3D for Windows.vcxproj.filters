@@ -48,6 +48,9 @@
     <ClCompile Include="src\tesselator.cpp">
       <Filter>Source Files\client</Filter>
     </ClCompile>
+    <ClCompile Include="src\world.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\real3d\player.h">

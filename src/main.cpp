@@ -5,6 +5,8 @@
 
 #include "real3d/world.h"
 #include "real3d/timer.h"
+#include "real3d/player.h"
+#include "real3d/block.h"
 #include "real3d/hit.h"
 #include "real3d/client/world_renderer.h"
 #include "real3d/client/tesselator.h"
@@ -58,7 +60,7 @@ bool grabbing;
 
 GLuint selectBuffer[2000];
 GLint viewportBuffer[16];
-GLfloat lightBuffer[16];
+GLfloat lightBuffer[4];
 
 GLuint crossing;
 
@@ -93,6 +95,9 @@ void keyCb(GLFWwindow*, int key, int scancode, int action, int mods) {
         }
         if (key == GLFW_KEY_3) {
             player->handItems = Blocks::STONE;
+        }
+        if (key == GLFW_KEY_4) {
+            player->handItems = Blocks::DIRT;
         }
     }
 }
@@ -187,7 +192,22 @@ void setupPickCamera(double delta, int x, int y) {
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     moveCameraToPlayer(timer->delta);
+}
 
+void setupFog(int layer) {
+    if (layer == 0) {
+        glDisable(GL_LIGHTING);
+    }
+    else if (layer == 1) {
+        glEnable(GL_LIGHTING);
+        glEnable(GL_COLOR_MATERIAL);
+        constexpr float br = 0.6f;
+        lightBuffer[0] = br;
+        lightBuffer[1] = br;
+        lightBuffer[2] = br;
+        lightBuffer[3] = 1.0f;
+        glLightModelfv(GL_LIGHT_MODEL_AMBIENT, lightBuffer);
+    }
 }
 
 void pick(double delta) {
@@ -252,7 +272,7 @@ void drawGui() {
     glBindTexture(GL_TEXTURE_2D, blockAtlas);
     glEnable(GL_TEXTURE_2D);
     t.init();
-    player->handItems->render(t, world, -2, 0, 0);
+    player->handItems->render(t, world, 0, -2, 0, 0);
     t.flush();
     glDisable(GL_TEXTURE_2D);
     glPopMatrix();
@@ -273,18 +293,30 @@ void render(double delta) {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     setupCamera(delta);
+    glEnable(GL_CULL_FACE);
     worldRenderer->updateDirtyChunks(player);
-    worldRenderer->render(player, blockAtlas);
+    setupFog(0);
+    worldRenderer->render(player, 0, blockAtlas);
+    setupFog(1);
+    worldRenderer->render(player, 1, blockAtlas);
 
+    glDisable(GL_LIGHTING);
     glDisable(GL_TEXTURE_2D);
 
     if (hitResult != nullptr) {
+        glDisable(GL_ALPHA_TEST);
         worldRenderer->renderHit(hitResult);
+        glEnable(GL_ALPHA_TEST);
     }
 
     drawGui();
 
     glfwSwapBuffers(window);
+}
+
+void tick() {
+    world->randomTick(player);
+    player->tick();
 }
 
 int WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
@@ -317,11 +349,17 @@ int WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     gladLoadGL(glfwGetProcAddress);
     //glfwSwapInterval(1);
 
-    glClearColor(0.4f, 0.6f, 0.9f, 1.0f);
     glEnable(GL_TEXTURE_2D);
+    glShadeModel(GL_SMOOTH);
+    glClearColor(0.4f, 0.6f, 0.9f, 1.0f);
+    glClearDepth(1.0);
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LEQUAL);
-    glEnable(GL_CULL_FACE);
+    glMatrixMode(GL_PROJECTION);
+    glEnable(GL_ALPHA_TEST);
+    glAlphaFunc(GL_GREATER, 0.5f);
+    glLoadIdentity();
+    glMatrixMode(GL_MODELVIEW);
     resize(WIDTH, HEIGHT);
 
     glGenTextures(1, &blockAtlas);
@@ -373,7 +411,7 @@ int WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     while (!glfwWindowShouldClose(window)) {
         timer->advanceTime();
         for (int i = 0; i < timer->ticks; ++i) {
-            player->tick();
+            tick();
         }
         render(timer->delta);
         glfwPollEvents();

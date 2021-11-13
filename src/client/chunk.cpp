@@ -1,6 +1,8 @@
 #include "real3d/client/chunk.h"
 #include "real3d/client/tesselator.h"
 #include "real3d/world.h"
+#include "real3d/player.h"
+#include "real3d/block.h"
 #include "GLFW/glfw3.h"
 
 using Real3D::Chunk;
@@ -24,15 +26,15 @@ Chunk::Chunk(World* _world,
     z((_z0 + _z1) / 2.0),
     aabb(new AABB(_x0, _y0, _z0, _x1, _y1, _z1)),
     dirty(true),
-    list(glGenLists(1)) {}
+    lists(glGenLists(2)) {}
 Chunk::~Chunk() {
     delete aabb;
-    glDeleteLists(list, 1);
+    glDeleteLists(lists, 2);
 }
-void Chunk::rebuild() {
+void Chunk::rebuild(int layer) {
     dirty = false;
     auto& t = Tesselator::getInstance();
-    glNewList(list, GL_COMPILE);
+    glNewList(lists + layer, GL_COMPILE);
     t.init();
 
     for (int x = x0; x < x1; ++x) {
@@ -40,7 +42,7 @@ void Chunk::rebuild() {
             for (int z = z0; z < z1; ++z) {
                 Block* block = world->getBlock(x, y, z);
                 if (!block->isAir()) {
-                    block->render(t, world, x, y, z);
+                    block->render(t, world, layer, x, y, z);
                 }
             }
         }
@@ -49,8 +51,12 @@ void Chunk::rebuild() {
     t.flush();
     glEndList();
 }
-void Chunk::render() {
-    glCallList(list);
+void Chunk::rebuild() {
+    rebuild(0);
+    rebuild(1);
+}
+void Chunk::render(int layer) {
+    glCallList(lists + layer);
 }
 void Chunk::markDirty() {
     if (!dirty) {

@@ -37,7 +37,7 @@ namespace Real3D {
         std::vector<Chunk*>* getAllDirtyChunks();
         void updateDirtyChunks(Player* player);
         void pick(Player* player, Frustum& frustum);
-        void render(Player* player, GLuint blockAtlas);
+        void render(Player* player, int layer, GLuint blockAtlas);
         void renderHit(HitResult* h);
         void markDirty(int x0, int y0, int z0, int x1, int y1, int z1);
         void blockChanged(int x, int y, int z) override;

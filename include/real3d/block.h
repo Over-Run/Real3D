@@ -5,6 +5,7 @@
 
 namespace Real3D {
     class World;
+    class Player;
     class AABB;
 
     class Block {
@@ -20,9 +21,11 @@ namespace Real3D {
         virtual bool isAir();
         virtual AABB* getOutline();
         virtual AABB* getCollision();
+        virtual bool shouldRenderFace(World* world, int x, int y, int z, int layer);
         virtual void pickFace(Tesselator& t, int x, int y, int z, Direction dir);
         virtual void renderFace(Tesselator& t, int x, int y, int z, Direction dir);
-        virtual void render(Tesselator& t, World* world, int x, int y, int z);
+        virtual void render(Tesselator& t, World* world, int layer, int x, int y, int z);
+        virtual void tick(World* world, Player* player, int x, int y, int z, unsigned int random);
     };
 
     class AirBlock : public Block {
@@ -36,13 +39,21 @@ namespace Real3D {
         AABB* getCollision() override;
         void pickFace(Tesselator&, int, int, int, Direction) override;
         void renderFace(Tesselator& t, int, int, int, Direction) override;
-        void render(Tesselator& t, World*, int, int, int) override;
+        void render(Tesselator& t, World*, int, int, int, int) override;
+    };
+
+    class GrassBlock : public Block {
+    public:
+        GrassBlock(int _id);
+
+        void tick(World* world, Player* player, int x, int y, int z, unsigned int random) override;
     };
 
     struct Blocks {
         static Block* AIR;
         static Block* STONE;
         static Block* GRASS_BLOCK;
+        static Block* DIRT;
 
         static void init();
     };

@@ -2,6 +2,7 @@
 #include "gmath.h"
 #include "real3d/world.h"
 #include "real3d/player.h"
+#include "real3d/block.h"
 #include "GLFW/glfw3.h"
 
 using std::vector;
@@ -67,7 +68,7 @@ void Player::tick() {
         if (!flying)
             heightOffset = 1.32;
         bbHeight = 1.5;
-        speed -= 0.01;
+        speed -= 0.05;
         if (flying) {
             yd = -0.5;
         }
@@ -95,7 +96,7 @@ void Player::move(double xa, double ya, double za) {
     double xaOrg = xa;
     double yaOrg = ya;
     double zaOrg = za;
-    vector<AABB*> cubes = world->getCubes(bb->expand(xa, ya, za));
+    vector<AABB*> cubes = world->getCubes(&bb->expand(xa, ya, za));
     for (AABB* aabb : cubes) {
         ya = aabb->clipYCollide(bb, ya);
     }

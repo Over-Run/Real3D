@@ -1,4 +1,7 @@
 #include "real3d/client/chunk.h"
+#include "real3d/client/world_renderer.h"
+#include "real3d/block.h"
+#include "real3d/player.h"
 #include "real3d/hit.h"
 #include "real3d/world.h"
 #include "GLFW/glfw3.h"
@@ -137,11 +140,12 @@ void WorldRenderer::pick(Player* player, Frustum& frustum) {
     glPopName();
     glPopName();
 }
-void WorldRenderer::render(Player* player, GLuint blockAtlas) {
+void WorldRenderer::render(Player* player, int layer, GLuint blockAtlas) {
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, blockAtlas);
     auto& frustum = Frustum::getFrustum();
     /// Rendering radius
+    /// See also: world.cpp
     constexpr int r = 8;
     int x0 = player->x / CHUNK_SIZE - r;
     int y0 = player->y / CHUNK_SIZE - r;
@@ -172,7 +176,7 @@ void WorldRenderer::render(Player* player, GLuint blockAtlas) {
             for (int z = z0; z < z1; ++z) {
                 auto& c = chunks[BlockPos(x, y, z)];
                 if (frustum.isVisible(c->aabb)) {
-                    c->render();
+                    c->render(layer);
                 }
             }
         }
@@ -183,7 +187,7 @@ void WorldRenderer::renderHit(HitResult* h) {
     auto& t = Tesselator::getInstance();
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-    glColor4d(1.0, 1.0, 1.0, (sin(glfwGetTime() * 10.0) * 0.2 + 0.4) * 0.5);
+    glColor4d(1.0, 1.0, 1.0, 0.5);
     t.init();
     Blocks::STONE->pickFace(t, h->x, h->y, h->z, h->face);
     t.flush();
