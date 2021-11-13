@@ -11,6 +11,7 @@ namespace Real3D {
         static constexpr int height = 16 * 4;
         static constexpr int depth = 16 * 16;
         Block* blocks[width * height * depth];
+        int lightDepths[width * depth];
         std::vector<WorldListener*> listeners;
 
         World() {
@@ -24,7 +25,30 @@ namespace Real3D {
                         else if (y == 4) {
                             b = Blocks::GRASS_BLOCK;
                         }
-                        setBlock(x, y, z, b);
+                        blocks[getIndex(x, y, z)] = b;
+                    }
+                }
+            }
+            calcLightDepths(0, 0, width, depth);
+        }
+
+        void calcLightDepths(int x0, int z0, int x1, int z1) {
+            for (int x = x0; x < x0 + x1; ++x) {
+                for (int z = z0; z < z0 + z1; ++z) {
+                    int oldDepth = lightDepths[x + z * width];
+
+                    int y = height - 1;
+                    while (y > 0 && !isLightBlocker(x, y, z)) {
+                        --y;
+                    }
+
+                    lightDepths[x + z * width] = y;
+                    if (oldDepth != y) {
+                        int yl0 = fmin(oldDepth, y);
+                        int yl1 = fmax(oldDepth, y);
+                        for (auto& listener : listeners) {
+                            listener->lightColumnChanged(x, z, yl0, yl1);
+                        }
                     }
                 }
             }
@@ -32,6 +56,10 @@ namespace Real3D {
 
         void addListener(WorldListener* listener) {
             listeners.push_back(listener);
+        }
+
+        bool isLightBlocker(int x, int y, int z) {
+            return getBlock(x, y, z)->isOpaque();
         }
 
         std::vector<AABB*> getCubes(AABB aabb) {
@@ -75,6 +103,10 @@ namespace Real3D {
             return cubes;
         }
 
+        bool isLit(int x, int y, int z) {
+            return !inBorder(x, y, z) || y >= lightDepths[x + z * width];
+        }
+
         int getIndex(int x, int y, int z) {
             return x + y * width + z * width * height;
         }
@@ -87,7 +119,12 @@ namespace Real3D {
 
         void setBlock(int x, int y, int z, Block* block) {
             if (inBorder(x, y, z)) {
-                blocks[getIndex(x, y, z)] = block;
+                int i = getIndex(x, y, z);
+                if (blocks[i] == block) {
+                    return;
+                }
+                blocks[i] = block;
+                calcLightDepths(x, z, 1, 1);
                 for (auto& l : listeners) {
                     l->blockChanged(x, y, z);
                 }

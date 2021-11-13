@@ -39,7 +39,7 @@ void Chunk::rebuild() {
         for (int y = y0; y < y1; ++y) {
             for (int z = z0; z < z1; ++z) {
                 Block* block = world->getBlock(x, y, z);
-                if (block != Blocks::AIR) {
+                if (!block->isAir()) {
                     block->render(t, world, x, y, z);
                 }
             }

@@ -16,8 +16,11 @@ Block::Block(int _id) :
 bool Block::isSolid() {
     return true;
 }
-bool Block::isOpacity() {
+bool Block::isOpaque() {
     return true;
+}
+bool Block::isAir() {
+    return false;
 }
 AABB* Block::getOutline() {
     return AABB::FULL_CUBE;
@@ -134,27 +137,27 @@ void Block::render(Tesselator& t, World* world, int x, int y, int z) {
     float c1 = 1.0f;
     float c2 = 0.8f;
     float c3 = 0.6f;
-    if (world->getBlock(x, y, z - 1) == Blocks::AIR) {
+    if (world->getBlock(x, y, z - 1)->isAir()) {
         t.color(c3, c3, c3);
         renderFace(t, x, y, z, Direction::NORTH);
     }
-    if (world->getBlock(x, y, z + 1) == Blocks::AIR) {
+    if (world->getBlock(x, y, z + 1)->isAir()) {
         t.color(c3, c3, c3);
         renderFace(t, x, y, z, Direction::SOUTH);
     }
-    if (world->getBlock(x - 1, y, z) == Blocks::AIR) {
+    if (world->getBlock(x - 1, y, z)->isAir()) {
         t.color(c1, c1, c1);
         renderFace(t, x, y, z, Direction::WEST);
     }
-    if (world->getBlock(x + 1, y, z) == Blocks::AIR) {
+    if (world->getBlock(x + 1, y, z)->isAir()) {
         t.color(c1, c1, c1);
         renderFace(t, x, y, z, Direction::EAST);
     }
-    if (world->getBlock(x, y + 1, z) == Blocks::AIR) {
+    if (world->getBlock(x, y + 1, z)->isAir()) {
         t.color(c2, c2, c2);
         renderFace(t, x, y, z, Direction::UP);
     }
-    if (world->getBlock(x, y - 1, z) == Blocks::AIR) {
+    if (world->getBlock(x, y - 1, z)->isAir()) {
         t.color(c2, c2, c2);
         renderFace(t, x, y, z, Direction::DOWN);
     }
@@ -164,8 +167,11 @@ AirBlock::AirBlock(int _id) : Block(_id) {}
 bool AirBlock::isSolid() {
     return false;
 }
-bool AirBlock::isOpacity() {
+bool AirBlock::isOpaque() {
     return false;
+}
+bool AirBlock::isAir() {
+    return true;
 }
 AABB* AirBlock::getOutline() {
     return nullptr;

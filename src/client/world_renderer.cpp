@@ -141,7 +141,7 @@ void WorldRenderer::render(Player* player, GLuint blockAtlas) {
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, blockAtlas);
     auto& frustum = Frustum::getFrustum();
-    // Rendering radius
+    /// Rendering radius
     constexpr int r = 8;
     int x0 = player->x / CHUNK_SIZE - r;
     int y0 = player->y / CHUNK_SIZE - r;
@@ -158,14 +158,14 @@ void WorldRenderer::render(Player* player, GLuint blockAtlas) {
     if (z0 < 0) {
         z0 = 0;
     }
-    if (x1 >= xChunks) {
-        x1 = xChunks - 1;
+    if (x1 > xChunks) {
+        x1 = xChunks;
     }
-    if (y1 >= yChunks) {
-        y1 = yChunks - 1;
+    if (y1 > yChunks) {
+        y1 = yChunks;
     }
-    if (z1 >= zChunks) {
-        z1 = zChunks - 1;
+    if (z1 > zChunks) {
+        z1 = zChunks;
     }
     for (int x = x0; x < x1; ++x) {
         for (int y = y0; y < y1; ++y) {
@@ -177,12 +177,6 @@ void WorldRenderer::render(Player* player, GLuint blockAtlas) {
             }
         }
     }
-    /*for (auto& p : chunks) {
-        auto& c = p.second;
-        if (frustum.isVisible(c->aabb)) {
-            c->render();
-        }
-    }*/
     glDisable(GL_TEXTURE_2D);
 }
 void WorldRenderer::renderHit(HitResult* h) {
@@ -231,5 +225,9 @@ void WorldRenderer::markDirty(int x0, int y0, int z0, int x1, int y1, int z1) {
 void WorldRenderer::blockChanged(int x, int y, int z) {
     markDirty(x - 1, y - 1, z - 1, x + 1, y + 1, z + 1);
 }
-void WorldRenderer::lightColumnChanged(int x, int z, int y0, int y1) {}
-void WorldRenderer::allChanged() {}
+void WorldRenderer::lightColumnChanged(int x, int z, int y0, int y1) {
+    markDirty(x - 1, y0 - 1, z - 1, x + 1, y1 + 1, z + 1);
+}
+void WorldRenderer::allChanged() {
+    markDirty(0, 0, 0, world->width, world->height, world->depth);
+}

@@ -58,6 +58,7 @@ bool grabbing;
 
 GLuint selectBuffer[2000];
 GLint viewportBuffer[16];
+GLfloat lightBuffer[16];
 
 GLuint crossing;
 
@@ -164,20 +165,36 @@ void moveCameraToPlayer(double delta) {
     glTranslated(-x, -y, -z);
 }
 
-void pick() {
-    glPushMatrix();
-    memset(selectBuffer, 0, 2000 * sizeof(GLuint));
-    glSelectBuffer(2000, selectBuffer);
-    glRenderMode(GL_SELECT);
+void setupCamera(double delta) {
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    gluPerspective(70.0,
+        (GLdouble)width / (GLdouble)height,
+        0.05,
+        1000.0);
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    moveCameraToPlayer(delta);
+}
+
+void setupPickCamera(double delta, int x, int y) {
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     memset(viewportBuffer, 0, 16 * sizeof(GLint));
     glGetIntegerv(GL_VIEWPORT, viewportBuffer);
-    gluPickMatrix(width / 2.0, height / 2.0, 5.0, 5.0, viewportBuffer);
+    gluPickMatrix(x, y, 5.0, 5.0, viewportBuffer);
     gluPerspective(70.0, (GLdouble)width / (GLdouble)height, 0.05, 1000.0);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     moveCameraToPlayer(timer->delta);
+
+}
+
+void pick(double delta) {
+    memset(selectBuffer, 0, 2000 * sizeof(GLuint));
+    glSelectBuffer(2000, selectBuffer);
+    glRenderMode(GL_SELECT);
+    setupPickCamera(delta, width / 2, height / 2);
     worldRenderer->pick(player, Frustum::getFrustum());
     GLint hits = glRenderMode(GL_RENDER);
     long closest = 0L;
@@ -211,7 +228,6 @@ void pick() {
         delete hitResult;
         hitResult = nullptr;
     }
-    glPopMatrix();
 }
 
 void drawGui() {
@@ -252,19 +268,11 @@ void drawGui() {
 }
 
 void render(double delta) {
-    pick();
+    pick(delta);
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    gluPerspective(70.0,
-        (GLdouble)width / (GLdouble)height,
-        0.05,
-        1000.0);
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-    moveCameraToPlayer(delta);
+    setupCamera(delta);
     worldRenderer->updateDirtyChunks(player);
     worldRenderer->render(player, blockAtlas);
 

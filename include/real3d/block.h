@@ -16,7 +16,8 @@ namespace Real3D {
         Block(int _id);
 
         virtual bool isSolid();
-        virtual bool isOpacity();
+        virtual bool isOpaque();
+        virtual bool isAir();
         virtual AABB* getOutline();
         virtual AABB* getCollision();
         virtual void pickFace(Tesselator& t, int x, int y, int z, Direction dir);
@@ -29,7 +30,8 @@ namespace Real3D {
         AirBlock(int _id);
 
         bool isSolid() override;
-        bool isOpacity() override;
+        bool isOpaque() override;
+        bool isAir() override;
         AABB* getOutline() override;
         AABB* getCollision() override;
         void pickFace(Tesselator&, int, int, int, Direction) override;
