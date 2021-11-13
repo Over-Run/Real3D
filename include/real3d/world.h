@@ -2,14 +2,16 @@
 #include <vector>
 #include "block.h"
 #include "player.h"
+#include "client/world_renderer.h"
 
 namespace Real3D {
     class World {
     public:
-        static constexpr int width = 32;
-        static constexpr int height = 32;
-        static constexpr int depth = 32;
+        static constexpr int width = 16 * 16;
+        static constexpr int height = 16 * 4;
+        static constexpr int depth = 16 * 16;
         Block* blocks[width * height * depth];
+        std::vector<WorldListener*> listeners;
 
         World() {
             for (int x = 0; x < width; ++x) {
@@ -26,6 +28,10 @@ namespace Real3D {
                     }
                 }
             }
+        }
+
+        void addListener(WorldListener* listener) {
+            listeners.push_back(listener);
         }
 
         std::vector<AABB*> getCubes(AABB aabb) {
@@ -80,8 +86,12 @@ namespace Real3D {
         }
 
         void setBlock(int x, int y, int z, Block* block) {
-            if (inBorder(x, y, z))
+            if (inBorder(x, y, z)) {
                 blocks[getIndex(x, y, z)] = block;
+                for (auto& l : listeners) {
+                    l->blockChanged(x, y, z);
+                }
+            }
         }
 
         Block* getBlock(int x, int y, int z) {

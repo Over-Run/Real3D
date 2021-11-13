@@ -6,7 +6,7 @@
 #include "real3d/world.h"
 #include "real3d/timer.h"
 #include "real3d/hit.h"
-#include "real3d/world_renderer.h"
+#include "real3d/client/world_renderer.h"
 
 #define GLFW_INCLUDE_NONE
 #include "GLFW/glfw3.h"
@@ -16,7 +16,7 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb/stb_image.h"
 
-#define ERROR_EXIT(msg) \
+#define GLFW_ERROR_EXIT(msg) \
 const char* desc; \
 int code = glfwGetError(&desc); \
 cout << msg" Error " << code << ": " << desc << endl; \
@@ -171,7 +171,7 @@ void pick() {
     glLoadIdentity();
     memset(viewportBuffer, 0, 16 * sizeof(GLint));
     glGetIntegerv(GL_VIEWPORT, viewportBuffer);
-    gluPickMatrix(width / 2.0, height / 2.0, 2.5, 2.5, viewportBuffer);
+    gluPickMatrix(width / 2.0, height / 2.0, 5.0, 5.0, viewportBuffer);
     gluPerspective(70.0, (GLdouble)width / (GLdouble)height, 0.05, 1000.0);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
@@ -278,13 +278,13 @@ void render(double delta) {
 int WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     glfwSetErrorCallback(errorCb);
     if (!glfwInit()) {
-        ERROR_EXIT("Can't init GLFW!");
+        GLFW_ERROR_EXIT("Can't init GLFW!");
     }
 
     glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
     window = glfwCreateWindow(WIDTH, HEIGHT, "Real3D for Windows", nullptr, nullptr);
     if (window == nullptr) {
-        ERROR_EXIT("Can't create window!");
+        GLFW_ERROR_EXIT("Can't create window!");
     }
 
     glfwSetKeyCallback(window, keyCb);

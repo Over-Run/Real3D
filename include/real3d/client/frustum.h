@@ -11,7 +11,10 @@ namespace Real3D {
         float proj[16];
         float modl[16];
         float clip[16];
+        Frustum() = default;
     public:
+        Frustum(const Frustum&) = delete;
+        Frustum operator=(const Frustum&) = delete;
         float m_Frustum[6][4];
         static constexpr int RIGHT = 0;
         static constexpr int LEFT = 1;

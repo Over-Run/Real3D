@@ -1,5 +1,5 @@
 #pragma once
-#include "frustum.h"
+#include "client/frustum.h"
 
 namespace Real3D {
     enum class Direction {

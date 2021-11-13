@@ -13,6 +13,12 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
     </Filter>
+    <Filter Include="Header Files\client">
+      <UniqueIdentifier>{29a92cb0-cb5e-4597-aab8-0c8f8ba99d20}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\client">
+      <UniqueIdentifier>{88fa06d7-efb5-4cfe-9682-afe7a92a8a8c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -30,14 +36,14 @@
     <ClCompile Include="src\aabb.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\chunk.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="src\client\frustum.cpp">
+      <Filter>Source Files\client</Filter>
     </ClCompile>
-    <ClCompile Include="src\frustum.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="src\client\world_renderer.cpp">
+      <Filter>Source Files\client</Filter>
     </ClCompile>
-    <ClCompile Include="src\world_renderer.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="src\client\chunk.cpp">
+      <Filter>Source Files\client</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -65,13 +71,16 @@
     <ClInclude Include="include\real3d\hit.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\real3d\chunk.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="include\real3d\client\frustum.h">
+      <Filter>Header Files\client</Filter>
     </ClInclude>
-    <ClInclude Include="include\real3d\world_renderer.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="include\real3d\client\world_renderer.h">
+      <Filter>Header Files\client</Filter>
     </ClInclude>
-    <ClInclude Include="include\real3d\frustum.h">
+    <ClInclude Include="include\real3d\client\chunk.h">
+      <Filter>Header Files\client</Filter>
+    </ClInclude>
+    <ClInclude Include="include\real3d\pos.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
