@@ -54,7 +54,7 @@ void Player::tick() {
             yd = 0.5;
         }
     }
-    double speed = 0.15;
+    double speed = 0.2;
     if (!flying) {
         if (onGround) {
             speed = 0.1;

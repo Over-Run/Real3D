@@ -1,5 +1,7 @@
 #include "real3d/client/chunk.h"
+#include "real3d/client/tesselator.h"
 #include "real3d/world.h"
+#include "GLFW/glfw3.h"
 
 using Real3D::Chunk;
 
@@ -29,28 +31,31 @@ Chunk::~Chunk() {
 }
 void Chunk::rebuild() {
     dirty = false;
-
+    auto& t = Tesselator::getInstance();
     glNewList(list, GL_COMPILE);
-    //glBegin(GL_QUADS);
+    t.init();
 
     for (int x = x0; x < x1; ++x) {
         for (int y = y0; y < y1; ++y) {
             for (int z = z0; z < z1; ++z) {
                 Block* block = world->getBlock(x, y, z);
                 if (block != Blocks::AIR) {
-                    block->render(world, x, y, z);
+                    block->render(t, world, x, y, z);
                 }
             }
         }
     }
 
-    //glEnd();
+    t.flush();
     glEndList();
 }
 void Chunk::render() {
     glCallList(list);
 }
 void Chunk::markDirty() {
+    if (!dirty) {
+        dirtiedTime = glfwGetTime() * 1000;
+    }
     dirty = true;
 }
 bool Chunk::isDirty() {

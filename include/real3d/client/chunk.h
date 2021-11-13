@@ -18,6 +18,7 @@ namespace Real3D {
         double y;
         double z;
         AABB* aabb;
+        double dirtiedTime;
     private:
         bool dirty;
         int list;

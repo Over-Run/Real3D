@@ -146,6 +146,7 @@
     <ClCompile Include="src\client\world_renderer.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\player.cpp" />
+    <ClCompile Include="src\tesselator.cpp" />
     <ClCompile Include="src\timer.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -153,6 +154,7 @@
     <ClInclude Include="include\real3d\block.h" />
     <ClInclude Include="include\real3d\client\chunk.h" />
     <ClInclude Include="include\real3d\client\frustum.h" />
+    <ClInclude Include="include\real3d\client\tesselator.h" />
     <ClInclude Include="include\real3d\client\world_renderer.h" />
     <ClInclude Include="include\real3d\enums.h" />
     <ClInclude Include="include\real3d\hit.h" />

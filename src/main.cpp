@@ -7,6 +7,7 @@
 #include "real3d/timer.h"
 #include "real3d/hit.h"
 #include "real3d/client/world_renderer.h"
+#include "real3d/client/tesselator.h"
 
 #define GLFW_INCLUDE_NONE
 #include "GLFW/glfw3.h"
@@ -40,6 +41,7 @@ using Real3D::WorldRenderer;
 using Real3D::Frustum;
 using Real3D::HitResult;
 using Real3D::Direction;
+using Real3D::Tesselator;
 
 GLFWwindow* window;
 Timer* timer;
@@ -225,16 +227,17 @@ void drawGui() {
 
     glPushMatrix();
     glTranslated(screenWidth - 16, 16.0, 0.0);
+    auto& t = Tesselator::getInstance();
     glScaled(16.0, 16.0, 16.0);
     glRotated(30.0, 1.0, 0.0, 0.0);
-    glRotated(45.0, 0.0, 1.0, 0.0);
+    glRotated(45.0, 0.0, -1.0, 0.0);
     glTranslated(-1.5, 0.5, -0.5);
     glScaled(-1.0, -1.0, 1.0);
     glBindTexture(GL_TEXTURE_2D, blockAtlas);
     glEnable(GL_TEXTURE_2D);
-    glBegin(GL_QUADS);
-    player->handItems->render(world, -2, 0, 0);
-    glEnd();
+    t.init();
+    player->handItems->render(t, world, -2, 0, 0);
+    t.flush();
     glDisable(GL_TEXTURE_2D);
     glPopMatrix();
 
@@ -262,7 +265,8 @@ void render(double delta) {
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     moveCameraToPlayer(delta);
-    worldRenderer->render(blockAtlas);
+    worldRenderer->updateDirtyChunks(player);
+    worldRenderer->render(player, blockAtlas);
 
     glDisable(GL_TEXTURE_2D);
 
@@ -338,23 +342,24 @@ int WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     int frames = 0;
     player->lastSpace = timer->passedTime;
 
+    auto& t = Tesselator::getInstance();
     crossing = glGenLists(1);
     glNewList(crossing, GL_COMPILE);
-    glColor3d(1.0, 1.0, 1.0);
-    glBegin(GL_QUADS);
-    glVertex3d(1, -4, 0);
-    glVertex3d(0, -4, 0);
-    glVertex3d(0, 5, 0);
-    glVertex3d(1, 5, 0);
-    glVertex3d(5, 0, 0);
-    glVertex3d(1, 0, 0);
-    glVertex3d(1, 1, 0);
-    glVertex3d(5, 1, 0);
-    glVertex3d(0, 0, 0);
-    glVertex3d(-4, 0, 0);
-    glVertex3d(-4, 1, 0);
-    glVertex3d(0, 1, 0);
-    glEnd();
+    t.init();
+    t.color(1, 1, 1)
+        .vertex(1, -4, 0)
+        .vertex(0, -4, 0)
+        .vertex(0, 5, 0)
+        .vertex(1, 5, 0)
+        .vertex(5, 0, 0)
+        .vertex(1, 0, 0)
+        .vertex(1, 1, 0)
+        .vertex(5, 1, 0)
+        .vertex(0, 0, 0)
+        .vertex(-4, 0, 0)
+        .vertex(-4, 1, 0)
+        .vertex(0, 1, 0);
+    t.flush();
     glEndList();
 
     while (!glfwWindowShouldClose(window)) {

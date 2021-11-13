@@ -45,6 +45,9 @@
     <ClCompile Include="src\client\chunk.cpp">
       <Filter>Source Files\client</Filter>
     </ClCompile>
+    <ClCompile Include="src\tesselator.cpp">
+      <Filter>Source Files\client</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\real3d\player.h">
@@ -82,6 +85,9 @@
     </ClInclude>
     <ClInclude Include="include\real3d\pos.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\real3d\client\tesselator.h">
+      <Filter>Header Files\client</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

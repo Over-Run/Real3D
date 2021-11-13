@@ -1,6 +1,7 @@
 #pragma once
 #include "glad/gl.h"
 #include "enums.h"
+#include "client/tesselator.h"
 
 namespace Real3D {
     class World;
@@ -18,9 +19,9 @@ namespace Real3D {
         virtual bool isOpacity();
         virtual AABB* getOutline();
         virtual AABB* getCollision();
-        virtual void pickFace(int x, int y, int z, Direction dir);
-        virtual void renderFace(int x, int y, int z, Direction dir);
-        virtual void render(World* world, int x, int y, int z);
+        virtual void pickFace(Tesselator& t, int x, int y, int z, Direction dir);
+        virtual void renderFace(Tesselator& t, int x, int y, int z, Direction dir);
+        virtual void render(Tesselator& t, World* world, int x, int y, int z);
     };
 
     class AirBlock : public Block {
@@ -31,9 +32,9 @@ namespace Real3D {
         bool isOpacity() override;
         AABB* getOutline() override;
         AABB* getCollision() override;
-        void pickFace(int x, int y, int z, Direction dir) override;
-        void renderFace(int, int, int, Direction) override;
-        void render(World*, int, int, int) override;
+        void pickFace(Tesselator&, int, int, int, Direction) override;
+        void renderFace(Tesselator& t, int, int, int, Direction) override;
+        void render(Tesselator& t, World*, int, int, int) override;
     };
 
     struct Blocks {
